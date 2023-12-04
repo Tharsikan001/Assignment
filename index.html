@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Text Editor - CT/2019/037</title>
+    <!-- Internal CSS -->
+    
+    <style>
+        #editor {
+          border: 0px solid #ccc;
+          min-height: 300px;
+          padding: 50px;
+          overflow:auto;
+        }
+
+        #editor-textarea {
+          border: 5px solid #ccc;
+          min-height: 400px;
+          width: 800px;
+          padding: 50px;
+          overflow:auto;
+        }
+        
+        #backgroundcolor{
+            background-color: black;
+        }
+        .custom-button {
+            background-color: black;
+            color: white;
+            border: 20px;
+            padding: 7px 15px;
+            cursor: pointer;
+        }
+    
+        .color-picker-label {
+          display: inline-block;
+          position: relative;
+          vertical-align: middle;
+        }
+
+        .color-picker {
+          position: absolute;
+          opacity: 0;
+          width: 100%;
+          height: 100%;
+          cursor: pointer;
+        }
+        </style>
+    
+</head>
+
+<body>
+
+  <div>
+    <h1> Online Text Editing Application....!</h1>
+  </div>
+
+  <center>
+    <div id="backgroundcolor"  class="custom-button">
+        <button type="button" class="custom-button" onclick="cmd('bold')">
+            <b><img src="Resources/bold-xxl.png" width="15" height="15" ></b>
+        </button>
+        <button type="button" class="custom-button" onclick="cmd('underline')">
+            <u><img src="Resources/format_underline_white_192x192.png" width="28" height="18" ></u>
+        </button> 
+        <button type="button" class="custom-button" onclick="cmd('italic')">
+            <i><img src="Resources/italic-xxl.png" width="15" height="15" ></i>
+        </button> 
+        <label for="font-color-picker" class="color-picker-label">
+            <input type="color" class="color-picker" id="font-color-picker" onchange="changeFontColor(this.value)">
+            <img src="Resources/font-color-icon.png" width="24" height="20">
+        </label>
+        <button type="button" class="custom-button" onclick="alignText('left')">
+            <img src="Resources/left.png" width="15" height="15" >
+        </button>
+  
+        <button type="button" class="custom-button" onclick="alignText('center')">
+            <img src="Resources/center.png" width="15" height="15" >
+        </button>
+  
+        <button type="button" class="custom-button" onclick="alignText('right')">
+            <img src="Resources/right.png" width="15" height="15" >
+        </button>
+  
+        <button type="button" class="custom-button" onclick="alignText('justify')">
+            <img src="Resources/justify.png" width="15" height="15" >
+        </button>
+        <button type="button" class="custom-button" onclick="undo()">
+            <img src="Resources/undo-4-32.png" width="15" height="15" >
+        </button>
+  
+        <button type="button" class="custom-button" onclick="redo()">
+            <img src="Resources/action-redo-32.png" width="15" height="15" >
+        </button>
+ 
+
+    </div>
+  </center>
+
+  <div id="editor">
+    <center>
+      <div id="editor-textarea"  contenteditable="true">
+
+
+      </div>
+    </center>
+  </div>
+
+
+
+    <!-- Internal JS -->
+  <script>
+    const format = document.getElementById('editor');
+
+    function cmd(command, value = null) {
+    document.execCommand(command, false, value);
+    saveState();
+    } 
+    function changeFontColor(selectedColor) {
+        document.execCommand('foreColor', false, selectedColor);
+        saveState(); 
+    }
+
+    
+
+    editor.addEventListener('paste', (event) => {
+    event.preventDefault(); 
+    const pastedText = (event.clipboardData || window.clipboardData).getData('text');
+    document.execCommand('insertText', false, pastedText);
+});
+//alignments
+function alignText(align) {
+    const validAlignments = ['left', 'center', 'right', 'justify'];
+
+    if (validAlignments.includes(align)) {
+        const editor = document.getElementById('editor-textarea');
+        document.execCommand('styleWithCSS', false, true); 
+        document.execCommand('justify' + align.charAt(0).toUpperCase() + align.slice(1), false, null); 
+
+        if (align === 'justify') {
+            document.execCommand('justifyFull');
+        } else {
+            editor.style.textAlign = align;
+        }
+
+        saveState(); 
+    } else {
+        console.error('Invalid alignment value provided.');
+    }
+}
+// undo&redo
+let undoStack = [];
+    let redoStack = [];
+
+    function saveState() {
+      const content = editor.innerHTML;
+      undoStack.push(content);
+    }
+
+    function undo() {
+      if (undoStack.length > 1) {
+        redoStack.push(undoStack.pop());
+        const content = undoStack[undoStack.length - 1];
+        editor.innerHTML = content;
+      }
+    }
+
+    function redo() {
+      if (redoStack.length > 0) {
+        const content = redoStack.pop();
+        editor.innerHTML = content;
+        undoStack.push(content);
+      }
+    }
+       
+    editor.addEventListener('input', saveState);
+
+ 
+
+  </script>
+</body>
+<!-- Author: Tharsikan | CT/2019/037 -->
+</html>

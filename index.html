@@ -73,6 +73,21 @@
             <input type="color" class="color-picker" id="font-color-picker" onchange="changeFontColor(this.value)">
             <img src="Resources/font-color-icon.png" width="24" height="20">
         </label>
+        <button type="button" class="custom-button" onclick="alignText('left')">
+            <img src="Resources/left.png" width="15" height="15" >
+        </button>
+  
+        <button type="button" class="custom-button" onclick="alignText('center')">
+            <img src="Resources/center.png" width="15" height="15" >
+        </button>
+  
+        <button type="button" class="custom-button" onclick="alignText('right')">
+            <img src="Resources/right.png" width="15" height="15" >
+        </button>
+  
+        <button type="button" class="custom-button" onclick="alignText('justify')">
+            <img src="Resources/justify.png" width="15" height="15" >
+        </button>
  
 
     </div>
@@ -109,6 +124,26 @@
     const pastedText = (event.clipboardData || window.clipboardData).getData('text');
     document.execCommand('insertText', false, pastedText);
 });
+//this function for alignments
+function alignText(align) {
+    const validAlignments = ['left', 'center', 'right', 'justify'];
+
+    if (validAlignments.includes(align)) {
+        const editor = document.getElementById('editor-textarea');
+        document.execCommand('styleWithCSS', false, true); 
+        document.execCommand('justify' + align.charAt(0).toUpperCase() + align.slice(1), false, null); 
+
+        if (align === 'justify') {
+            document.execCommand('justifyFull');
+        } else {
+            editor.style.textAlign = align;
+        }
+
+        saveState(); 
+    } else {
+        console.error('Invalid alignment value provided.');
+    }
+}
 
  
 

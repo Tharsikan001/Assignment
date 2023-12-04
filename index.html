@@ -88,6 +88,13 @@
         <button type="button" class="custom-button" onclick="alignText('justify')">
             <img src="Resources/justify.png" width="15" height="15" >
         </button>
+        <button type="button" class="custom-button" onclick="undo()">
+            <img src="Resources/undo-4-32.png" width="15" height="15" >
+        </button>
+  
+        <button type="button" class="custom-button" onclick="redo()">
+            <img src="Resources/action-redo-32.png" width="15" height="15" >
+        </button>
  
 
     </div>
@@ -124,7 +131,7 @@
     const pastedText = (event.clipboardData || window.clipboardData).getData('text');
     document.execCommand('insertText', false, pastedText);
 });
-//this function for alignments
+//alignments
 function alignText(align) {
     const validAlignments = ['left', 'center', 'right', 'justify'];
 
@@ -144,6 +151,32 @@ function alignText(align) {
         console.error('Invalid alignment value provided.');
     }
 }
+// undo&redo
+let undoStack = [];
+    let redoStack = [];
+
+    function saveState() {
+      const content = editor.innerHTML;
+      undoStack.push(content);
+    }
+
+    function undo() {
+      if (undoStack.length > 1) {
+        redoStack.push(undoStack.pop());
+        const content = undoStack[undoStack.length - 1];
+        editor.innerHTML = content;
+      }
+    }
+
+    function redo() {
+      if (redoStack.length > 0) {
+        const content = redoStack.pop();
+        editor.innerHTML = content;
+        undoStack.push(content);
+      }
+    }
+       
+    editor.addEventListener('input', saveState);
 
  
 
